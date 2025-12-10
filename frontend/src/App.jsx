@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { format, subDays } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
-  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import { 
   Download, Calendar, TrendingUp, Users, 
-  MessageSquare, CheckCircle, RefreshCw 
+  MessageSquare, RefreshCw 
 } from 'lucide-react';
 import './App.css';
 
@@ -79,24 +79,24 @@ function App() {
       doc.text('RESUMO GERAL', 14, 45);
       
       const resumoData = [
-        ['Período', 'Interações', 'Pessoas', 'Qualificados'],
+        ['Período', 'Mensagens', 'Pessoas', 'Novos Contatos'],
         [
           'Hoje',
           resumo.hoje?.total_interacoes || '0',
           resumo.hoje?.pessoas_atendidas || '0',
-          resumo.hoje?.pessoas_qualificadas || '0'
+          resumo.hoje?.novos_contatos || '0'
         ],
         [
           'Semana',
           resumo.semana?.total_interacoes || '0',
           resumo.semana?.pessoas_atendidas || '0',
-          resumo.semana?.pessoas_qualificadas || '0'
+          resumo.semana?.novos_contatos || '0'
         ],
         [
           'Mês',
           resumo.mes?.total_interacoes || '0',
           resumo.mes?.pessoas_atendidas || '0',
-          resumo.mes?.pessoas_qualificadas || '0'
+          resumo.mes?.novos_contatos || '0'
         ]
       ];
       
@@ -116,12 +116,12 @@ function App() {
         item.total_interacoes,
         item.pessoas_atendidas,
         item.media_interacoes_por_pessoa,
-        item.pessoas_qualificadas
+        item.novos_contatos
       ]);
       
       doc.autoTable({
         startY: doc.lastAutoTable.finalY + 10,
-        head: [['Data', 'Interações', 'Pessoas', 'Média/Pessoa', 'Qualificados']],
+        head: [['Data', 'Mensagens', 'Pessoas', 'Média/Pessoa', 'Novos']],
         body: tableData,
         theme: 'striped',
         headStyles: { fillColor: [107, 76, 154] }
@@ -137,11 +137,10 @@ function App() {
     // Preparar dados
     const dadosExcel = relatorioDiario.map(item => ({
       'Data': format(new Date(item.data), 'dd/MM/yyyy'),
-      'Total Interações': item.total_interacoes,
-      'Pessoas Atendidas': item.pessoas_atendidas,
-      'Média Interações/Pessoa': item.media_interacoes_por_pessoa,
+      'Total Mensagens': item.total_interacoes,
+      'Pessoas Conversando': item.pessoas_atendidas,
+      'Média Mensagens/Pessoa': item.media_interacoes_por_pessoa,
       'Novos Contatos': item.novos_contatos,
-      'Pessoas Qualificadas': item.pessoas_qualificadas,
       'Ministérios Distintos': item.ministerios_distintos
     }));
     
@@ -222,10 +221,9 @@ function App() {
           <div className="card-content">
             <h3>Hoje</h3>
             <p className="card-value">{resumo?.hoje?.total_interacoes || 0}</p>
-            <p className="card-label">interações</p>
+            <p className="card-label">mensagens trocadas</p>
             <div className="card-details">
-              <span>{resumo?.hoje?.pessoas_atendidas || 0} pessoas</span>
-              <span>{resumo?.hoje?.pessoas_qualificadas || 0} qualificados</span>
+              <span>{resumo?.hoje?.pessoas_atendidas || 0} pessoas conversando</span>
             </div>
           </div>
         </div>
@@ -237,10 +235,9 @@ function App() {
           <div className="card-content">
             <h3>Esta Semana</h3>
             <p className="card-value">{resumo?.semana?.total_interacoes || 0}</p>
-            <p className="card-label">interações</p>
+            <p className="card-label">mensagens trocadas</p>
             <div className="card-details">
-              <span>{resumo?.semana?.pessoas_atendidas || 0} pessoas</span>
-              <span>{resumo?.semana?.pessoas_qualificadas || 0} qualificados</span>
+              <span>{resumo?.semana?.pessoas_atendidas || 0} pessoas conversando</span>
             </div>
           </div>
         </div>
@@ -252,25 +249,24 @@ function App() {
           <div className="card-content">
             <h3>Este Mês</h3>
             <p className="card-value">{resumo?.mes?.total_interacoes || 0}</p>
-            <p className="card-label">interações</p>
+            <p className="card-label">mensagens trocadas</p>
             <div className="card-details">
-              <span>{resumo?.mes?.pessoas_atendidas || 0} pessoas</span>
-              <span>Taxa: {resumo?.mes?.taxa_conversao_pct || 0}%</span>
+              <span>{resumo?.mes?.pessoas_atendidas || 0} pessoas conversando</span>
+              <span>{resumo?.mes?.novos_contatos || 0} novos contatos</span>
             </div>
           </div>
         </div>
 
         <div className="card card-media">
           <div className="card-icon">
-            <CheckCircle size={24} />
+            <TrendingUp size={24} />
           </div>
           <div className="card-content">
             <h3>Média/Pessoa</h3>
             <p className="card-value">{resumo?.mes?.media_interacoes_por_pessoa || 0}x</p>
-            <p className="card-label">interações por pessoa</p>
+            <p className="card-label">mensagens por pessoa</p>
             <div className="card-details">
-              <span>{resumo?.mes?.novos_contatos || 0} novos contatos</span>
-              <span>{resumo?.mes?.ministerios_distintos || 0} ministérios</span>
+              <span>{resumo?.mes?.ministerios_distintos || 0} ministérios diferentes</span>
             </div>
           </div>
         </div>
@@ -280,7 +276,7 @@ function App() {
       <div className="charts-container">
         {/* Gráfico de Linha - Evolução Diária */}
         <div className="chart-card">
-          <h3>Evolução de Interações</h3>
+          <h3>Evolução de Mensagens e Pessoas</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={relatorioDiario}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E0D9E8" />
@@ -304,7 +300,7 @@ function App() {
                 dataKey="total_interacoes" 
                 stroke="#6B4C9A" 
                 strokeWidth={3}
-                name="Interações"
+                name="Mensagens"
                 dot={{ fill: '#6B4C9A', r: 4 }}
               />
               <Line 
@@ -321,7 +317,7 @@ function App() {
 
         {/* Gráfico de Barras - Comparativo */}
         <div className="chart-card">
-          <h3>Interações vs Pessoas vs Qualificados</h3>
+          <h3>Mensagens vs Pessoas Conversando</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={relatorioDiario.slice(-14)}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E0D9E8" />
@@ -340,9 +336,8 @@ function App() {
                 }}
               />
               <Legend />
-              <Bar dataKey="total_interacoes" fill="#6B4C9A" name="Interações" />
+              <Bar dataKey="total_interacoes" fill="#6B4C9A" name="Mensagens" />
               <Bar dataKey="pessoas_atendidas" fill="#8B6BB7" name="Pessoas" />
-              <Bar dataKey="pessoas_qualificadas" fill="#9B7BC4" name="Qualificados" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -356,11 +351,10 @@ function App() {
             <thead>
               <tr>
                 <th>Data</th>
-                <th>Interações</th>
+                <th>Mensagens</th>
                 <th>Pessoas</th>
                 <th>Média/Pessoa</th>
-                <th>Novos</th>
-                <th>Qualificados</th>
+                <th>Novos Contatos</th>
                 <th>Ministérios</th>
               </tr>
             </thead>
@@ -372,7 +366,6 @@ function App() {
                   <td className="number">{item.pessoas_atendidas}</td>
                   <td className="number">{item.media_interacoes_por_pessoa}x</td>
                   <td className="number badge badge-success">{item.novos_contatos}</td>
-                  <td className="number badge badge-primary">{item.pessoas_qualificadas}</td>
                   <td className="number">{item.ministerios_distintos}</td>
                 </tr>
               ))}
