@@ -1,0 +1,55 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Cores inspiradas na imagem da LidIA */
+  --primary: #6B4C9A;        /* Roxo principal */
+  --primary-dark: #533876;    /* Roxo escuro */
+  --primary-light: #8B6BB7;   /* Roxo claro */
+  --accent: #9B7BC4;          /* Lilás */
+  --bg-main: #F5F3F7;         /* Fundo claro */
+  --bg-card: #FFFFFF;         /* Fundo dos cards */
+  --text-primary: #2D2D2D;    /* Texto principal */
+  --text-secondary: #6B6B6B;  /* Texto secundário */
+  --border: #E0D9E8;          /* Bordas */
+  --success: #4CAF50;
+  --warning: #FF9800;
+  --danger: #F44336;
+  --shadow: rgba(107, 76, 154, 0.1);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-main);
+  color: var(--text-primary);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Scrollbar customizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
